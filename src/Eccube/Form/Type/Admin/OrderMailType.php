@@ -51,10 +51,16 @@ class OrderMailType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('mt')
-                        ->andWhere('mt.id = :id')
-                        ->setParameter('id', $this->eccubeConfig['eccube_order_mail_template_id'])
-                        ->orderBy('mt.id', 'ASC');
+                    // return $er->createQueryBuilder('mt')
+                    //     ->andWhere('mt.id = :id')
+                    //     ->setParameter('id', $this->eccubeConfig['eccube_order_mail_template_id'])
+                    //     ->orderBy('mt.id', 'ASC');
+                    $ids = array(1, 8);
+                    $qb = $er->createQueryBuilder('mt');
+                    $qb->andWhere($qb->expr()->in('mt.id', ':ids'))
+                    ->setParameter('ids', $ids)
+                    ->orderBy('mt.id', 'ASC');
+                    return $qb;
                 },
             ])
             ->add('mail_subject', TextType::class, [

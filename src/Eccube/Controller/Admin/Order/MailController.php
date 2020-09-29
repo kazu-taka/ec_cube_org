@@ -16,6 +16,7 @@ namespace Eccube\Controller\Admin\Order;
 use Eccube\Controller\AbstractController;
 use Eccube\Entity\MailHistory;
 use Eccube\Entity\Order;
+use Eccube\Entity\Shipping;
 use Eccube\Event\EccubeEvents;
 use Eccube\Event\EventArgs;
 use Eccube\Form\Type\Admin\OrderMailType;
@@ -74,7 +75,7 @@ class MailController extends AbstractController
      * @Route("/%eccube_admin_route%/order/{id}/mail", requirements={"id" = "\d+"}, name="admin_order_mail")
      * @Template("@admin/Order/mail.twig")
      */
-    public function index(Request $request, Order $Order)
+    public function index(Request $request, Order $Order, Shipping $Shipping)
     {
         $MailHistories = $this->mailHistoryRepository->findBy(['Order' => $Order]);
 
@@ -113,7 +114,7 @@ class MailController extends AbstractController
                             }
 
                             // 本文確認用
-                            $body = $this->createBody($Order, $twig);
+                            $body = $this->createBody($Order, $twig, $Shipping);
                         }
 
                         $form = $builder->getForm();
@@ -227,10 +228,11 @@ class MailController extends AbstractController
         ];
     }
 
-    private function createBody($Order, $twig = 'Mail/order.twig')
+    private function createBody($Order, $twig, $Shipping)
     {
         return $this->renderView($twig, [
             'Order' => $Order,
+            'Shipping' => $Shipping
         ]);
     }
 }
